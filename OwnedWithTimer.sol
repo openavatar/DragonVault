@@ -46,6 +46,7 @@ contract OwnedWithTimer {
     /// -----------------------------------------------------------------------
 
     address public collection;
+    
     uint256 public tokenId;
 
     uint48 public checked;
@@ -74,7 +75,7 @@ contract OwnedWithTimer {
 
         emit OwnershipTransferred(address(0), _owner);
 
-        emit Guard(_collection, _tokenId);
+        emit GuardSet(_collection, _tokenId);
 
         emit TimespanSet(_timespan);
     }
