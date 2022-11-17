@@ -108,7 +108,7 @@ contract OwnedWithTimer {
         emit CheckedIn(block.timestamp);
     }
 
-    function setKey(address _collection, uint256 _tokenId) public payable virtual onlyOwner {
+    function setGuard(address _collection, uint256 _tokenId) public payable virtual onlyOwner {
         collection = _collection;
 
         tokenId = _tokenId;
