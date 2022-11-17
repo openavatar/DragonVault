@@ -2,9 +2,9 @@
 pragma solidity ^0.8.4;
 
 /// @notice Simple single owner authorization mixin with timer for guardianship.
-/// @author Zolidity (https://github.com/z0r0z/zolidity/blob/main/src/auth/OwnedWithTimeguard.sol)
+/// @author Zolidity (https://github.com/z0r0z/zolidity/blob/main/src/auth/OwnedWithTimer.sol)
 /// @author Modified from Solmate (https://github.com/transmissions11/solmate/blob/main/src/auth/Owned.sol)
-contract OwnedWithTimeguard {
+contract OwnedWithTimer {
     /// -----------------------------------------------------------------------
     /// Events
     /// -----------------------------------------------------------------------
@@ -36,7 +36,7 @@ contract OwnedWithTimeguard {
     }
 
     /// -----------------------------------------------------------------------
-    /// Time Guard Storage
+    /// Timer Storage
     /// -----------------------------------------------------------------------
 
     address public guardian;
@@ -88,7 +88,7 @@ contract OwnedWithTimeguard {
     }
 
     /// -----------------------------------------------------------------------
-    /// Time Guard Logic
+    /// Timer Logic
     /// -----------------------------------------------------------------------
 
     function checkIn() public payable virtual onlyOwner {
