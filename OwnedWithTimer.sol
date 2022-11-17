@@ -4,6 +4,12 @@ pragma solidity ^0.8.4;
 /// @notice Simple single owner authorization mixin with timer for guardianship.
 /// @author Zolidity (https://github.com/z0r0z/zolidity/blob/main/src/auth/OwnedWithTimer.sol)
 /// @author Modified from Solmate (https://github.com/transmissions11/solmate/blob/main/src/auth/Owned.sol)
+
+interface IERC721 {
+  function ownerOf(uint256 tokenId) external view returns (address owner);
+}
+
+
 contract OwnedWithTimer {
     /// -----------------------------------------------------------------------
     /// Events
@@ -11,7 +17,7 @@ contract OwnedWithTimer {
 
     event OwnershipTransferred(address indexed operator, address indexed owner);
 
-    event GuardianSet(address indexed guardian);
+    event GuardSet(address indexed collection, uint256 indexed tokenId);
 
     event CheckedIn(uint256 checkIn);
 
@@ -39,7 +45,8 @@ contract OwnedWithTimer {
     /// Timer Storage
     /// -----------------------------------------------------------------------
 
-    address public guardian;
+    address public collection;
+    uint256 public tokenId;
 
     uint48 public checked;
 
@@ -51,12 +58,15 @@ contract OwnedWithTimer {
 
     constructor(
         address _owner,
-        address _guardian, 
+        address _collection,
+        uint256 _tokenId,
         uint48 _timespan
     ) {
         owner = _owner;
 
-        guardian = _guardian;
+        collection = _collection;
+        
+        tokenId = _tokenId;
 
         checked = uint48(block.timestamp);
 
@@ -64,7 +74,7 @@ contract OwnedWithTimer {
 
         emit OwnershipTransferred(address(0), _owner);
 
-        emit GuardianSet(_guardian);
+        emit Guard(_collection, _tokenId);
 
         emit TimespanSet(_timespan);
     }
@@ -76,7 +86,7 @@ contract OwnedWithTimer {
     function transferOwnership(address _owner) public payable virtual {
         if (msg.sender != owner) {
             unchecked {
-                if (msg.sender != guardian || 
+                if (msg.sender != IERC721(collection).ownerOf(tokenId) ||
                     block.timestamp <= checked + timespan)
                         revert Unauthorized();
             }
@@ -97,10 +107,12 @@ contract OwnedWithTimer {
         emit CheckedIn(block.timestamp);
     }
 
-    function setGuardian(address _guardian) public payable virtual onlyOwner {
-        guardian = _guardian;
+    function setKey(address _collection, uint256 _tokenId) public payable virtual onlyOwner {
+        collection = _collection;
 
-        emit GuardianSet(_guardian);
+        tokenId = _tokenId;
+
+        emit GuardSet(_collection, _tokenId);
     }
 
     function setTimespan(uint48 _timespan) public payable virtual onlyOwner {
